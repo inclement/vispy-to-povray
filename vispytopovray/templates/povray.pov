@@ -18,7 +18,7 @@ camera {
   perspective
   location <{{ location[0] }}, {{ location[1] }}, {{ location[2] }}>
   right <-1, 0, 0>
-  angle {{ angle }}
+  angle {{ fov }}
   look_at <{{ look_at[0] }}, {{ look_at[1] }}, {{ look_at[2] }}>
 }
 
@@ -33,27 +33,27 @@ light_source {
 {% for mesh in meshes %}
 mesh2 {
   vertex_vectors {
-    {{ len(mesh.vertex_vectors) }},
+    {{ mesh.vertex_vectors|length }},
     {% for row in mesh.vertex_vectors %}<{{ row[0] }}, {{ row[1] }}, {{ row[2] }}>,
     {% endfor %}
   }
   normal_vectors {
-    {{ len(mesh.normal_vectors) }},
+    {{ mesh.normal_vectors|length }},
     {% for row in mesh.normal_vectors %}<{{ row[0] }}, {{ row[1] }}, {{ row[2] }}>,
     {% endfor %}
   }
   texture_list {
-    {{ len(mesh.vertex_colors) }},
+    {{ mesh.vertex_colors|length }},
     {% for row in mesh.vertex_colors %}texture { pigment {color rgb <{{ row[0] }}, {{ row[1] }}, {{ row[2] }}> } }
     {% endfor %}
   }
   face_indices {
-    {{ len(mesh.faces) }},
+    {{ mesh.faces|length }},
     {% for row in mesh.faces %}<{{ row[0] }}, {{ row[1] }}, {{ row[2] }}>, {{ row[0] }}, {{ row[1] }}, {{ row[2] }},
     {% endfor %}
   }
   normal_indices {
-    {{ len(mesh.faces) }},
+    {{ mesh.faces|length }},
     {% for row in mesh.faces %}<{{ row[0] }}, {{ row[1] }}, {{ row[2] }}>,
     {% endfor %}
   }
