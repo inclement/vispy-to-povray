@@ -12,25 +12,41 @@ POVRayMeshData = namedtuple('POVRayMeshData', ['vertex_vectors',
                                                'normal_vectors',
                                                'vertex_colors',
                                                'faces'])
+
+def mesh_to_povray(mesh):
+    md = mesh._meshdata
+
+    vertex_colors = md.get_vertex_colors()
+    if vertex_colors is None:
+        color = mesh._color
+        vertex_colors = np.resize(color, (len(md.get_vertices()), 4))
+
+    return POVRayMeshData(
+        vertex_vectors=md.get_vertices(),
+        normal_vectors=md.get_vertex_normals(),
+        vertex_colors=vertex_colors,
+        faces=md.get_faces())
+    
+
 def viewbox_to_povray(viewbox, filen):
 
-    kwargs = {'bgcolor': (1.0, 0.9, 0.9),
+    kwargs = {'bgcolor': (1.0, 1.0, 1.0),
               'ambient': (1.0, 1.0, 1.0),
-              'location': (10., 10., 10.)}
+              'location': (50., 50., 50.)}
 
     camera = viewbox.camera
     kwargs['look_at'] = camera.center
     kwargs['fov'] = camera.fov
+    kwargs['camera_location'] = viewbox._scene.transform.map(
+        (camera.distance, 0, 0))
 
     meshes = [c for c in viewbox._scene._children if
               isinstance(c, MeshVisual)]
+    transforms = [c.transform for c in meshes]
     meshdatas = [c._meshdata for c in meshes]
-                            
-    kwargs['meshes'] = [POVRayMeshData(vertex_vectors=d.get_vertices(),
-                                       normal_vectors=d.get_vertex_normals(),
-                                       vertex_colors=d.get_vertex_colors(),
-                                       faces=d.get_faces()) for d in meshdatas]
-    
+
+    kwargs['meshes'] = [mesh_to_povray(mesh) for mesh in meshes]
+
     env = Environment(loader=FileSystemLoader(
         '/home/asandy/devel/vispy_povray/vispytopovray/templates'))
     template = env.get_template('povray.pov')

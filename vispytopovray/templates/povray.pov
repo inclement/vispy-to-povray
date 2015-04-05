@@ -16,7 +16,7 @@ background { color rgb <{{ bgcolor[0] }}, {{ bgcolor[1] }}, {{ bgcolor[2] }}> }
 
 camera {
   perspective
-  location <{{ location[0] }}, {{ location[1] }}, {{ location[2] }}>
+  location <{{ camera_location[0] }}, {{ camera_location[1] }}, {{ camera_location[2] }}>
   right <-1, 0, 0>
   angle {{ fov }}
   look_at <{{ look_at[0] }}, {{ look_at[1] }}, {{ look_at[2] }}>
@@ -28,7 +28,6 @@ light_source {
   parallel
   point_at <{{ look_at[0] }}, {{ look_at[1] }}, {{ look_at[2] }}>
 }
-
 
 {% for mesh in meshes %}
 mesh2 {
@@ -57,6 +56,13 @@ mesh2 {
     {% for row in mesh.faces %}<{{ row[0] }}, {{ row[1] }}, {{ row[2] }}>,
     {% endfor %}
   }
+  // {#
+  // matrix < {{ mesh.matrix[0, 0] }}, {{ mesh.matrix[0, 1] }}, {{ mesh.matrix[0, 2] }},
+  // {{ mesh.matrix[1, 0] }}, {{ mesh.matrix[1, 1] }}, {{ mesh.matrix[1, 2] }}, 
+  // {{ mesh.matrix[2, 0] }}, {{ mesh.matrix[2, 1] }}, {{ mesh.matrix[2, 2] }}, 
+  // {{ mesh.matrix[3, 0] }}, {{ mesh.matrix[3, 1] }}, {{ mesh.matrix[3, 2] }} >
+  //  #}
+
   matrix < 1.000000, 0.000000, 0.000000,
   0.000000, 1.000000, 0.000000,
   0.000000, 0.000000, 1.000000,
