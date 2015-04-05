@@ -1,6 +1,7 @@
 {% set bgcolor=bgcolor or (1.0, 1.0, 1.0) %}
 {% set ambient=ambient or (1.0, 1.0, 1.0) %}
 {% set location=location or (1.0, 1.0, 1.0) %}
+{% set camera_location=camera_location or (1.0, 1.0, 1.0) %}
 {% set look_at=look_at or (0.0, 0.0, 0.0) %}
 {% set fov=fov or 30 %}
 {% set meshes=meshes or [] %}
@@ -23,7 +24,7 @@ camera {
 }
 
 light_source {
-  <{{ location[0] }}, {{ location[1] }}, {{ location[2] }}>
+  <{{ camera_location[0] }}, {{ camera_location[1] }}, {{ camera_location[2] }}>
   color <1.000000, 1.000000, 1.000000>
   parallel
   point_at <{{ look_at[0] }}, {{ look_at[1] }}, {{ look_at[2] }}>
@@ -56,12 +57,6 @@ mesh2 {
     {% for row in mesh.faces %}<{{ row[0] }}, {{ row[1] }}, {{ row[2] }}>,
     {% endfor %}
   }
-  // {#
-  // matrix < {{ mesh.matrix[0, 0] }}, {{ mesh.matrix[0, 1] }}, {{ mesh.matrix[0, 2] }},
-  // {{ mesh.matrix[1, 0] }}, {{ mesh.matrix[1, 1] }}, {{ mesh.matrix[1, 2] }}, 
-  // {{ mesh.matrix[2, 0] }}, {{ mesh.matrix[2, 1] }}, {{ mesh.matrix[2, 2] }}, 
-  // {{ mesh.matrix[3, 0] }}, {{ mesh.matrix[3, 1] }}, {{ mesh.matrix[3, 2] }} >
-  //  #}
 
   matrix < 1.000000, 0.000000, 0.000000,
   0.000000, 1.000000, 0.000000,
