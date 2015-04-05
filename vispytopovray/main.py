@@ -14,12 +14,13 @@ POVRayMeshData = namedtuple('POVRayMeshData', ['vertex_vectors',
                                                'faces',
                                                'matrix'])
 
-def mesh_to_povray(mesh):
+def mesh_to_povray(mesh, cam_inv_transform):
     md = mesh._meshdata
 
     vertices = md.get_vertices()
     transform = mesh.transform
     vertices = transform.map(vertices)
+    vertices = cam_inv_transform.map(vertices)
 
     vertex_colors = md.get_vertex_colors()
     if vertex_colors is None:
@@ -34,27 +35,28 @@ def mesh_to_povray(mesh):
         matrix=None)
     
 
+# Need to work out what vispy parameter(s) affect camera position
+# With arcball + fov > 0, the distance makes its way to the transformation matrix
+#   (but the angles of rotation don't seem quite right)
+# With something else (maybe fov == 0 or distance None or something with set_range), the matrix doesn't include translation
+# I guess I have to understand and duplicate what vispy does with it internally
+
 def viewbox_to_povray(viewbox, filen):
 
-    kwargs = {'bgcolor': (1.0, 1.0, 1.0),
+    kwargs = {'bgcolor': (1.0, 1.0, 1.0), # Should change to SceneCanvas.bgcolor
               'ambient': (1.0, 1.0, 1.0),
               'location': (50., 50., 50.)}
 
     camera = viewbox.camera
-    kwargs['look_at'] = camera.center
     kwargs['fov'] = camera.fov
-    kwargs['camera_location'] = tuple(camera.transform.map(
-        (0, 0., camera.distance)))
-        #(camera.distance, 0., 0.)))
-    print('transform is', camera.transform,
-          camera.transform.map((0, 0, 0.)))
+    kwargs['camera_location'] = (0., 0., 0.)
+    kwargs['look_at'] = tuple(camera.transform.inverse.map(camera.center))
 
     meshes = [c for c in viewbox._scene._children if
               isinstance(c, MeshVisual)]
-    transforms = [c.transform for c in meshes]
-    meshdatas = [c._meshdata for c in meshes]
 
-    kwargs['meshes'] = [mesh_to_povray(mesh) for mesh in meshes]
+    kwargs['meshes'] = [mesh_to_povray(mesh, camera.transform.inverse)
+                        for mesh in meshes]
 
     env = Environment(loader=FileSystemLoader(
         '/home/asandy/devel/vispy_povray/vispytopovray/templates'))

@@ -69,6 +69,7 @@ mesh2 {
     }
     finish {
       ambient 0.0 diffuse 1.0 phong 0.0 phong_size 1.0
+      // Should set ambient and/or diffuse according to vispy color
     }
   }
 }
