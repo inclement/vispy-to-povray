@@ -1,6 +1,5 @@
 {% set bgcolor=bgcolor or (1.0, 1.0, 1.0) %}
 {% set ambient=ambient or (1.0, 1.0, 1.0) %}
-{% set location=location or (1.0, 1.0, 1.0) %}
 {% set camera_location=camera_location or (1.0, 1.0, 1.0) %}
 {% set look_at=look_at or (0.0, 0.0, 0.0) %}
 {% set fov=fov or 30 %}

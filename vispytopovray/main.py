@@ -7,12 +7,13 @@ import numpy as np
 from jinja2 import Environment, FileSystemLoader
 
 from vispy.visuals import MeshVisual
+from vispy.scene.canvas import SceneCanvas
+from vispy.scene import ViewBox
 
 POVRayMeshData = namedtuple('POVRayMeshData', ['vertex_vectors',
                                                'normal_vectors',
                                                'vertex_colors',
-                                               'faces',
-                                               'matrix'])
+                                               'faces',])
 
 def mesh_to_povray(mesh, cam_inv_transform):
     md = mesh._meshdata
@@ -31,8 +32,7 @@ def mesh_to_povray(mesh, cam_inv_transform):
         vertex_vectors=vertices,
         normal_vectors=md.get_vertex_normals(),
         vertex_colors=vertex_colors,
-        faces=md.get_faces(),
-        matrix=None)
+        faces=md.get_faces())
     
 
 # Need to work out what vispy parameter(s) affect camera position
@@ -41,7 +41,33 @@ def mesh_to_povray(mesh, cam_inv_transform):
 # With something else (maybe fov == 0 or distance None or something with set_range), the matrix doesn't include translation
 # I guess I have to understand and duplicate what vispy does with it internally
 
-def viewbox_to_povray(viewbox, filen):
+def scenecanvas_to_povray(canvas, filen):
+
+    assert isinstance(canvas, SceneCanvas)
+
+    kwargs = {'bgcolor': tuple(canvas.bgcolor.rgb),
+              'ambient': (1.0, 1.0, 1.0)}
+
+
+    viewbox_kwargs = None
+    for child in canvas.central_widget._widgets:
+        if isinstance(child, ViewBox):
+            viewbox_kwargs = viewbox_to_kwargs(child)
+    if viewbox_kwargs is None:
+        raise ValueError('Could not find ViewBox child of canvas '
+                         'central_widget')
+
+    kwargs.update(viewbox_kwargs)
+                
+    env = Environment(loader=FileSystemLoader(
+        '/home/asandy/devel/vispy_povray/vispytopovray/templates'))
+    template = env.get_template('povray.pov')
+
+    with open(filen, 'w') as fileh:
+        fileh.write(template.render(**kwargs))
+
+
+def viewbox_to_kwargs(viewbox):
 
     kwargs = {'bgcolor': (1.0, 1.0, 1.0), # Should change to SceneCanvas.bgcolor
               'ambient': (1.0, 1.0, 1.0),
@@ -58,11 +84,6 @@ def viewbox_to_povray(viewbox, filen):
     kwargs['meshes'] = [mesh_to_povray(mesh, camera.transform.inverse)
                         for mesh in meshes]
 
-    env = Environment(loader=FileSystemLoader(
-        '/home/asandy/devel/vispy_povray/vispytopovray/templates'))
-    template = env.get_template('povray.pov')
-
-    with open(filen, 'w') as fileh:
-        fileh.write(template.render(**kwargs))
+    return kwargs
 
 
