@@ -36,4 +36,5 @@ such as the following in for the tube example.
           
 One tube has only its mesh outline drawn by Vispy, but the full
 surface drawn by POVRay; this is because this property isn't (yet?)
-exported to POVRay.
+exported to POVRay. Another tube has its faces drawn flat by Vispy
+but smoothed by POVRay for the same reason.
