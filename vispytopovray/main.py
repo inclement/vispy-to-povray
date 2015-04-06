@@ -18,13 +18,25 @@ POVRayMeshData = namedtuple('POVRayMeshData', ['vertex_vectors',
                                                'vertex_colors',
                                                'faces',])
 
-def mesh_to_povray(mesh, cam_inv_transform):
+def mesh_to_povray(mesh, cam_inv_transform=None):
+    '''Converts a povray Mesh scene object (i.e. MeshVisual + Node)
+    to a collection of extracted POVRay data.
+
+    Parameters
+    ----------
+    mesh : vispy.scene.Mesh
+        A vispy Mesh object.
+    cam_inv_transform : BaseTransform
+        A vispy transform, intended to be the inverse of the
+        camera transform of a scene.
+    '''
     md = mesh._meshdata
 
     vertices = md.get_vertices()
     transform = mesh.transform
     vertices = transform.map(vertices)
-    vertices = cam_inv_transform.map(vertices)
+    if cam_inv_transform is not None:
+        vertices = cam_inv_transform.map(vertices)
 
     vertex_colors = md.get_vertex_colors()
     if vertex_colors is None:
@@ -38,14 +50,28 @@ def mesh_to_povray(mesh, cam_inv_transform):
         faces=md.get_faces())
     
 
-# Need to work out what vispy parameter(s) affect camera position
-# With arcball + fov > 0, the distance makes its way to the transformation matrix
-#   (but the angles of rotation don't seem quite right)
-# With something else (maybe fov == 0 or distance None or something with set_range), the matrix doesn't include translation
-# I guess I have to understand and duplicate what vispy does with it internally
-
-
+# Doesn't work with fov == 0!
+# Should use povray orthographic camera?
 def scenecanvas_to_povray(canvas, filen):
+    '''Converts a vispy SceneCanvas to POVRay code.
+
+    This works in a hacky way by searching the canvas.central_widget
+    for a ViewBox child, extracting all the Mesh visuals from
+    the first one found, and writing the mesh data for each of these
+    to a POVRay file (via a jinja2 template). This means it does *not*
+    draw all kinds of vispy visual and does *not* pick up all mesh
+    parameters.
+
+    Specifically, the POVRay mesh includes the original mesh vertices,
+    vertex_colors, vertex_normals and faces.
+
+    Parameters
+    ----------
+    canvas : vispy.scene.SceneCanvas
+        The SceneCanvas to export to POVRay.
+    filen : str
+        The filen at which to write the POVRay output file.
+    '''
 
     assert isinstance(canvas, SceneCanvas)
 
@@ -71,10 +97,7 @@ def scenecanvas_to_povray(canvas, filen):
 
 
 def viewbox_to_kwargs(viewbox):
-
-    kwargs = {'bgcolor': (1.0, 1.0, 1.0), # Should change to SceneCanvas.bgcolor
-              'ambient': (1.0, 1.0, 1.0),
-              'location': (50., 50., 50.)}
+    kwargs = {}
 
     camera = viewbox.camera
     kwargs['fov'] = camera.fov
