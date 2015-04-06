@@ -2,6 +2,9 @@ from __future__ import print_function, division
 
 from collections import namedtuple
 
+import os
+directory = os.path.dirname(os.path.realpath(__file__)) + '/templates'
+
 import numpy as np
 
 from jinja2 import Environment, FileSystemLoader
@@ -41,6 +44,7 @@ def mesh_to_povray(mesh, cam_inv_transform):
 # With something else (maybe fov == 0 or distance None or something with set_range), the matrix doesn't include translation
 # I guess I have to understand and duplicate what vispy does with it internally
 
+
 def scenecanvas_to_povray(canvas, filen):
 
     assert isinstance(canvas, SceneCanvas)
@@ -59,8 +63,7 @@ def scenecanvas_to_povray(canvas, filen):
 
     kwargs.update(viewbox_kwargs)
                 
-    env = Environment(loader=FileSystemLoader(
-        '/home/asandy/devel/vispy_povray/vispytopovray/templates'))
+    env = Environment(loader=FileSystemLoader(directory))
     template = env.get_template('povray.pov')
 
     with open(filen, 'w') as fileh:
