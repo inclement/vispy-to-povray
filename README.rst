@@ -7,6 +7,10 @@ ViewBox. Right now it doesn't look for anything else, so only
 these visuals are exported (though in practice, quite a few visuals
 subclass MeshVisual).
 
+This is highly incomplete and *will* probably break in the future,
+such as when collections are applied to visuals and meshes are merged
+or if parts of the unstable internal api is changed.
+
 Example usage::
 
     from vispy.scene import SceneCanvas
