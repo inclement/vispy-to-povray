@@ -30,21 +30,21 @@ The examples folder includes some results based on Vispy examples,
 such as the following surface plot:
 
 .. image:: examples/surface_plot_vispy.png
-    :width: 400px
+    :width: 150px
     :alt: Vispy surface plot example
 
 .. image:: examples/surface_plot_povray.png
-    :width: 400px
+    :width: 150px
     :alt: POV-Ray surface plot example
           
 Or the Tube visual example:
 
 .. image:: examples/tubes_vispy.png
-    :width: 400px
+    :width: 150px
     :alt: Vispy tube example screenshot
 
 .. image:: examples/tubes_povray.png
-    :width: 400px
+    :width: 150px
     :alt: POV-Ray tube example
           
 One tube has only its mesh outline drawn by Vispy, but the full
