@@ -9,8 +9,8 @@
 
 global_settings {
   ambient_light color <{{ ambient[0] }}, {{ ambient[1] }}, {{ ambient[2] }}>
-  assumed_gamma 2
-}
+  {% for key, value in global_settings.iteritems() %}{{ key }} {{ value }}
+  {% endfor %}}
 
 background { color rgb <{{ bgcolor[0] }}, {{ bgcolor[1] }}, {{ bgcolor[2] }}> }
 
@@ -43,7 +43,7 @@ mesh2 {
   }
   texture_list {
     {{ mesh.vertex_colors|length }},
-    {% for row in mesh.vertex_colors %}texture { pigment {color rgb <{{ row[0] }}, {{ row[1] }}, {{ row[2] }}> } }
+    {% for row in mesh.vertex_colors %}texture { pigment {color rgbt <{{ row[0] }}, {{ row[1] }}, {{ row[2] }}, {{ row[3] }}> } }
     {% endfor %}
   }
   face_indices {
@@ -67,7 +67,7 @@ mesh2 {
       color rgbf <1.0, 1.0, 1.0, 0.0>
     }
     finish {
-      ambient 0.0 diffuse 1.0 phong 0.0 phong_size 1.0
+      ambient 0.2 diffuse 1.0 phong 0.0 phong_size 1.0
       // Should set ambient and/or diffuse according to vispy color
     }
   }

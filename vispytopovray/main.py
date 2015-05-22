@@ -14,7 +14,7 @@ from vispy.scene.canvas import SceneCanvas
 from vispy.scene import ViewBox
 
 
-def export_to_povray(obj, filen):
+def export_to_povray(obj, filen, global_settings=None):
     '''Converts a vispy SceneCanvas or ViewBox to POVRay code.
 
     If a SceneCanvas is passed, this works in a hacky way by searching
@@ -33,7 +33,10 @@ def export_to_povray(obj, filen):
         The SceneCanvas or ViewBox to export to POVRay.
     filen : str
         The filen at which to write the POVRay output file.
-
+    global_settings : dict
+        A dictionary of setting-value pairs for POVRay's
+        global settings. Defaults to None, in which case
+        the default of {'assumed_gamma': 2} is used.
     '''
     if isinstance(obj, SceneCanvas):
         kwargs = _scenecanvas_to_kwargs(obj)
@@ -42,11 +45,22 @@ def export_to_povray(obj, filen):
         kwargs.update({'bgcolor': (1.0, 1.0, 1.0),
                        'ambient': (1.0, 1.0, 1.0)})
 
+    if global_settings is None:
+        global_settings = {}
+    if 'assumed_gamma' not in global_settings:
+        global_settings['assumed_gamma'] = 2
+
     env = Environment(loader=FileSystemLoader(directory))
     template = env.get_template('povray.pov')
 
     with open(filen, 'w') as fileh:
-        fileh.write(template.render(**kwargs))
+        fileh.write(template.render(global_settings=global_settings,
+                                    **kwargs))
+
+
+class POVRayCanvas(SceneCanvas):
+    def on_mouse_release(self, *args):
+        export_to_povray(self, 'povtest.pov')
 
 
 POVRayMeshData = namedtuple('POVRayMeshData', ['vertex_vectors',
@@ -79,6 +93,7 @@ def _mesh_to_povray(mesh, cam_inv_transform=None):
     if vertex_colors is None:
         color = mesh._color
         vertex_colors = np.resize(color, (len(md.get_vertices()), 4))
+    vertex_colors[:, -1] = 1. - vertex_colors[:, -1]
 
     return POVRayMeshData(
         vertex_vectors=vertices,
@@ -86,7 +101,6 @@ def _mesh_to_povray(mesh, cam_inv_transform=None):
         vertex_colors=vertex_colors,
         faces=md.get_faces())
     
-
 
 # Doesn't work with fov == 0!
 # Should use povray orthographic camera?

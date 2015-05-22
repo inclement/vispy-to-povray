@@ -7,9 +7,9 @@ ViewBox. Right now it doesn't look for anything else, so only Mesh
 nodes of a vispy scene via a ViewBox are exported. It also only works
 with a non-zero camera fov, orthographic projection is not exported.
 
-This is highly incomplete and will probably break in the future,
-such as when collections are applied to visuals
-or if parts of the unstable internal api are changed.
+This is highly incomplete and experimental and will probably break in
+the future, such as when collections are applied to visuals or if
+parts of the unstable internal api are changed.
 
 Example usage::
 
