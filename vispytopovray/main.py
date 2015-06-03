@@ -27,6 +27,8 @@ def export_to_povray(obj, filen, global_settings=None):
     POVRay mesh includes the original mesh vertices, vertex_colors,
     vertex_normals and faces.
 
+    .. note:: The output may be a very large file for complex scenes.
+
     Parameters
     ----------
     obj : vispy.scene.SceneCanvas or vispy.scene.ViewBox
