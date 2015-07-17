@@ -3,9 +3,10 @@
 {% set camera_location=camera_location or (1.0, 1.0, 1.0) %}
 {% set look_at=look_at or (0.0, 0.0, 0.0) %}
 {% set fov=fov or 30 %}
+{% set light_color=light_color or (1.0, 1.0, 1.0) %}
 {% set meshes=meshes or [] %}
 
-// POVRay file exported by inclement's crude vispy exporter
+// POVRay file generated with inclement's crude vispy exporter
 
 global_settings {
   ambient_light color <{{ ambient[0] }}, {{ ambient[1] }}, {{ ambient[2] }}>
@@ -23,8 +24,8 @@ camera {
 }
 
 light_source {
-  <{{ camera_location[0] }}, {{ camera_location[1] }}, {{ camera_location[2] }}>
-  color <1.000000, 1.000000, 1.000000>
+  <{{ light_location[0] }}, {{ light_location[1] }}, {{ light_location[2] }}>
+  color <{{ light_color[0] }}, {{ light_color[1] }}, {{ light_color[2] }}>
   parallel
   point_at <{{ look_at[0] }}, {{ look_at[1] }}, {{ look_at[2] }}>
 }
@@ -67,9 +68,10 @@ mesh2 {
       color rgbf <1.0, 1.0, 1.0, 0.0>
     }
     finish {
-      ambient 0.2 diffuse 1.0 phong 0.0 phong_size 1.0
+      ambient 0.0 diffuse 1.0 phong 0.0 phong_size 1.0
       // Should set ambient and/or diffuse according to vispy color
     }
   }
+  no_shadow
 }
 {% endfor %}
