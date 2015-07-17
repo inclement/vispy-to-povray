@@ -90,8 +90,8 @@ def _mesh_to_povray(mesh, cam_inv_transform=None):
     vertices = md.get_vertices()
     transform = mesh.transform
     vertices = transform.map(vertices)
-    if cam_inv_transform is not None:
-        vertices = cam_inv_transform.map(vertices)
+    # if cam_inv_transform is not None:
+    #     vertices = cam_inv_transform.map(vertices)
 
     vertex_colors = md.get_vertex_colors().copy()
     if vertex_colors is None:
@@ -102,8 +102,8 @@ def _mesh_to_povray(mesh, cam_inv_transform=None):
     normals = md.get_vertex_normals().copy()
     normals[np.isnan(normals)] = 0.0
     normals = transform.map(normals)
-    if cam_inv_transform is not None:
-        normals = cam_inv_transform.map(normals)
+    # if cam_inv_transform is not None:
+    #     normals = cam_inv_transform.map(normals)
 
     return POVRayMeshData(
         vertex_vectors=vertices,
@@ -140,10 +140,16 @@ def _viewbox_to_kwargs(viewbox):
     kwargs = {}
 
     camera = viewbox.camera
+
+    camera_location = tuple(camera.transform.map([0, 0, 0.])[:3])
+    look_at = camera.center
+
     kwargs['fov'] = camera.fov
-    kwargs['camera_location'] = (0., 0., 0.)
+    kwargs['camera_location'] = camera_location
     kwargs['light_location'] = kwargs['camera_location']
-    kwargs['look_at'] = tuple(camera.transform.inverse.map(camera.center))
+    kwargs['look_at'] = look_at
+
+    kwargs['sky'] = camera.transform.map([1, 1, 1])
 
     meshes = [c for c in viewbox._scene._children if
               isinstance(c, MeshVisual)]

@@ -19,6 +19,7 @@ camera {
   perspective
   location <{{ camera_location[0] }}, {{ camera_location[1] }}, {{ camera_location[2] }}>
   right <-1, 0, 0>
+  sky <{{ sky[0] }}, {{ sky[1] }}, {{ sky[2] }}>
   angle {{ fov }}
   look_at <{{ look_at[0] }}, {{ look_at[1] }}, {{ look_at[2] }}>
 }
@@ -72,6 +73,6 @@ mesh2 {
       // Should set ambient and/or diffuse according to vispy color
     }
   }
-  no_shadow
+  // no_shadow
 }
 {% endfor %}
