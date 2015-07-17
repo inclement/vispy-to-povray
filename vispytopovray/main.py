@@ -14,7 +14,7 @@ from vispy.scene.canvas import SceneCanvas
 from vispy.scene import ViewBox
 
 
-def export_to_povray(obj, filen, global_settings=None):
+def export_to_povray(obj, filen, global_settings=None, **kwargs):
     '''Converts a vispy SceneCanvas or ViewBox to POVRay code.
 
     If a SceneCanvas is passed, this works in a hacky way by searching
@@ -41,11 +41,13 @@ def export_to_povray(obj, filen, global_settings=None):
         the default of {'assumed_gamma': 2} is used.
     '''
     if isinstance(obj, SceneCanvas):
-        kwargs = _scenecanvas_to_kwargs(obj)
+        canvas_kwargs = _scenecanvas_to_kwargs(obj)
     elif isinstance(obj, ViewBox):
-        kwargs = _viewbox_to_kwargs(obj)
+        canvas_kwargs = _viewbox_to_kwargs(obj)
         kwargs.update({'bgcolor': (1.0, 1.0, 1.0),
                        'ambient': (1.0, 1.0, 1.0)})
+
+    kwargs.update(canvas_kwargs)
 
     if global_settings is None:
         global_settings = {}
@@ -137,6 +139,7 @@ def _viewbox_to_kwargs(viewbox):
     camera = viewbox.camera
     kwargs['fov'] = camera.fov
     kwargs['camera_location'] = (0., 0., 0.)
+    kwargs['light_location'] = kwargs['camera_location']
     kwargs['look_at'] = tuple(camera.transform.inverse.map(camera.center))
 
     meshes = [c for c in viewbox._scene._children if
