@@ -99,12 +99,15 @@ def _mesh_to_povray(mesh, cam_inv_transform=None):
         vertex_colors = np.resize(color, (len(md.get_vertices()), 4))
     vertex_colors[:, -1] = 1. - vertex_colors[:, -1]
 
-    normals = md.get_vertex_normals()
+    normals = md.get_vertex_normals().copy()
     normals[np.isnan(normals)] = 0.0
+    normals = transform.map(normals)
+    if cam_inv_transform is not None:
+        normals = cam_inv_transform.map(normals)
 
     return POVRayMeshData(
         vertex_vectors=vertices,
-        normal_vectors=md.get_vertex_normals(),
+        normal_vectors=normals,
         vertex_colors=vertex_colors,
         faces=md.get_faces())
     
