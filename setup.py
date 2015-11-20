@@ -24,7 +24,7 @@ def recursively_include(results, directory, patterns):
             if not any([glob.fnmatch.fnmatch(fn, pattern) for pattern in patterns]):
                 continue
             filename = join(root, fn)
-            directory = 'pythonforandroid'
+            directory = 'vispytopovray'
             if directory not in results:
                 results[directory] = []
             results[directory].append(join(*filename.split(sep)[1:]))
