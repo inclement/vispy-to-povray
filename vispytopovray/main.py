@@ -55,7 +55,7 @@ def export_to_povray(obj, filen, global_settings=None, **kwargs):
         global_settings['assumed_gamma'] = 2
 
     env = Environment(loader=FileSystemLoader(directory))
-    template = env.get_template('povray.pov')
+    template = env.get_template('povray.pov.tmpl')
 
     with open(filen, 'w') as fileh:
         fileh.write(template.render(global_settings=global_settings,
