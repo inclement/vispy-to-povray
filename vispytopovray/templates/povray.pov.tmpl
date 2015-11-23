@@ -1,3 +1,4 @@
+#version 3.7;
 {% set bgcolor=bgcolor or (1.0, 1.0, 1.0) %}
 {% set ambient=ambient or (1.0, 1.0, 1.0) %}
 {% set camera_location=camera_location or (1.0, 1.0, 1.0) %}
@@ -28,6 +29,7 @@ light_source {
   color <{{ light_color[0] }}, {{ light_color[1] }}, {{ light_color[2] }}>
   parallel
   point_at <{{ look_at[0] }}, {{ look_at[1] }}, {{ look_at[2] }}>
+  shadowless
 }
 
 {% for mesh in meshes %}
