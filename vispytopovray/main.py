@@ -9,7 +9,7 @@ import numpy as np
 
 from jinja2 import Environment, FileSystemLoader
 
-from vispy.visuals import MeshVisual
+from vispy.visuals import MeshVisual, CompoundVisual
 from vispy.scene.canvas import SceneCanvas
 from vispy.scene import ViewBox
 
@@ -156,6 +156,16 @@ def _viewbox_to_kwargs(viewbox):
 
     meshes = [c for c in viewbox._scene._children if
               isinstance(c, MeshVisual)]
+
+    compound_visuals = [c for c in viewbox._scene._children if
+                        isinstance(c, CompoundVisual)]
+    for c in compound_visuals:
+        subvisuals = c._subvisuals
+        for subvisual in subvisuals:
+            if isinstance(subvisual, MeshVisual):
+                md = subvisual._meshdata
+                if md.get_vertex_colors() is not None:
+                    meshes.append(subvisual)
 
     kwargs['meshes'] = [_mesh_to_povray(mesh, camera.transform.inverse)
                         for mesh in meshes]
